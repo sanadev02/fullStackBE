@@ -13,7 +13,3 @@ Steps to download and run:
 7. In a **separate terminal window** navigate to the projects root directory and run `npm test` to run the tests. The tests will mostly fail, but that is because we have not yet written any code.
 
 Once you have completed the above, you are set up and ready to begin work on the assignment.
-
-If you have any issues, come see me in the labs.
-
-Ash
