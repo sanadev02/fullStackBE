@@ -33,8 +33,9 @@ const create = (req, res, next) => {
 
 
 const getOne = (req,res) => {
-    let article_id = parseInt(req.params.article_id);
-
+console.log('triggered')
+    let article_id = req;
+console.log(article_id, "blhkjh")
     articles.getSingleArticle(article_id, (err,result) => {
         if(err === 404)return res.sendStatus(404)
         if(err) return res.sendStatus(500)

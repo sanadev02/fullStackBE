@@ -1,9 +1,12 @@
 const Joi = require("joi");
 const { json } = require("body-parser");
 const comments = require("../models/comments.models");
+const articles = require("../controllers/articles.controllers");
 
 const getComments = (req,res) => {
-    comments.getAllComments(article_id, (err, num_rows, results) => {
+let article_id = parseInt(req.params.article_id);
+
+    comments.getOneComment(article_id, (err, results) => {
         if(err) return res.sendStatus(500);
         console.log('Triggered in comments')
         return res.status(200).send(results);
@@ -12,26 +15,21 @@ const getComments = (req,res) => {
 }
 
 const addComment = (req,res) => {
+    let article_id = req.params.article_id;
 
-    let article_id = parseInt(req.params.article_id);
-
-    articles.getSingleArticle(article_id, (err,result)=> {
-        if(err === 404) return res.sendStatus(404);   
-        if(err) return res.sendStatus(500);
+console.log(article_id,"bkj")
+   const hasArticle =  articles.getOne(article_id)
+   console.log(hasArticle, 'article')
+   if(!hasArticle) return res.status(400).json({messsage: 'article does not exist'})
     
-        const schema = Joi.object({
-            "comment_text":Joi.string().required()
-        })
     
-        const { error } = schema.validate(req.body);
-        if(error) return res.status(400).send(error.details[0].message);
-    })
-    let comment = Object.assign({},req.body);
+    let comment = req.body;
+    console.log(comment)
 
-    comments.AddNewComment(comment, (err,id) => {
-        if(err) return res.sendStatus(500);
-        return res.status(201).send({comment_id: id})
-    })
+    // comments.AddNewComment(comment, (err,id) => {
+    //     if(err) return res.sendStatus(500);
+    //     return res.status(200).send({comment_id: id})
+    // })
    
 }
 
@@ -53,7 +51,7 @@ const deleteComment = (req,res) => {
 }
 
 module.exports = {
-    getComments:getComments,
-    addComment:addComment,
-    deleteComment:deleteComment,
+    getComments,
+    addComment,
+    deleteComment,
 }

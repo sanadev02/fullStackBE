@@ -3,7 +3,7 @@ const comments = require("../controllers/comments.controllers");
 
 module.exports = function(app){
 
-    app.route("/articles/{article_id}/comments")
+    app.route("/articles/:article_id/comments")
        .get(comments.getComments)
        .post(comments.addComment);
 

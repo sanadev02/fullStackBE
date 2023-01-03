@@ -2,26 +2,21 @@ const db = require("../../database");
 const article = require("../../app/controllers/articles.controllers");
 
 
-const getAllComments =(done) => {
+const getOneComment =(id,done) => {
     console.log('in comments')
-    const results =[];
+    const sql = 'SELECT * FROM comments WHERE article_id=?'
 
-    db.each(
-        "SELECT * FROM comments",
-        [],
-        (err,row) => {
-            if (err) console.log("Something went wrong: " + err);
+    db.get(sql, [id], (err,row) => {
+        if(err) return done(err)
+        if(!row) return done(404)
 
-            results.push({
+        return done(null, {
                 comment_id:row.comment_id,
                 comment_text:row.comment_text,
                 date_published:new Date(row.date_published).toLocaleDateString(),
                 article_id:row.article_id,
 
-            });
-        },
-        (err, num_rows)=> {
-            return done(err,num_rows, results);
+            })
         }
     )
 }
@@ -54,7 +49,7 @@ const deleteC = (id,done) => {
 }
 
 module.exports = {
-    getAllComments:getAllComments,
+    getOneComment:getOneComment,
     AddNewComment:AddNewComment,
     deleteC:deleteC,
 }
