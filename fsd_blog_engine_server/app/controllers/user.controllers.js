@@ -1,15 +1,14 @@
-const { json } = require("body-parser");
 const Joi = require("joi");
-const user = require("../models/user.models");
+const users = require("../models/user.models");
 
-const getAll = (req, res, next) => {
-    user.getAllUsers((err, num_rows, results)=> {
-        if(err) {
+const getAll = (req, res) => {
+    users.getAllUsers((err, num_rows, results) => {
+        if (err) {
             console.log(err)
             return res.sendStatus(500);
         }
         return res.status(200).send(results);
-    })  
+    })
 }
 
 const NewUser = (req, res, next) => {
@@ -26,16 +25,16 @@ const NewUser = (req, res, next) => {
 
     let temp_user = Object.assign({}, req.body);
 
-    user.addNewUser(temp_user, (err, id) => {
+    users.addNewUser(temp_user, (err, id) => {
         if (err)
-            return res.sendStatus(500); 
+            return res.sendStatus(500);
 
         return res.status(201).send({ user_id: id })
     })
 }
 
 
-const loginUser = (req,res) => {
+const loginUser = (req, res) => {
 
     const schema = Joi.object({
         "email": Joi.string().email().required(),
@@ -45,40 +44,40 @@ const loginUser = (req,res) => {
     const { error } = schema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    user.authenticateUser(req.body.email, req.body.password, (err,id) => {
-        if(err === 404) return res.status(400).send("Invalid email/password supplied")
-        if(err) return res.sendStatus(500)
+    users.authenticateUser(req.body.email, req.body.password, (err, id) => {
+        if (err === 404) return res.status(400).send("Invalid email/password supplied")
+        if (err) return res.sendStatus(500)
 
-        user.getToken(id, (err, token) => {
+        users.getToken(id, (err, token) => {
             if (err) return res.sendStatus(500)
 
-            if(token){
-                return res.status(200).send({user_id: id, session_token: token})
-            }else{
-                user.setToken(id, (err, token) => {
+            if (token) {
+                return res.status(200).send({ user_id: id, session_token: token })
+            } else {
+                users.setToken(id, (err, token) => {
                     if (err) return res.sendStatus(500)
-                    return res.status(200).send({user_id: id, session_token: token})
+                    return res.status(201).send({ user_id: id, session_token: token })
                 })
             }
-            
+
         })
     })
 }
 
 const logoutUser = (req, res, next) => {
     let token = req.get('X-Authorization');
-        user.removeToken(token,(err) => {
-            if(err){ 
-                console.log(err)
-                return res.sendStatus(500) 
-            }
-            return res.status(201).send("User logged out");
-        })
+    users.removeToken(token, (err) => {
+        if (err) {
+            console.log(err)
+            return res.sendStatus(500)
+        }
+        return res.status(201).send("User logged out");
+    })
 }
 
 module.exports = {
-    getAll:getAll,
-    NewUser:NewUser,
-    loginUser:loginUser,
-    logoutUser:logoutUser,
+    getAll: getAll,
+    NewUser: NewUser,
+    loginUser: loginUser,
+    logoutUser: logoutUser,
 }

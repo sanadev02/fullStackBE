@@ -1,15 +1,15 @@
-const user = require("../controllers/user.controllers");
+const users = require("../controllers/user.controllers");
 const auth = require("../lib/authentication");
 
 module.exports = function(app){
 
     app.route("/user")
-       .get(auth.isAuthenticated, user.getAll)
-       .post(auth.isAuthenticated, user.NewUser);
+       .get(auth.isAuthenticated, users.getAll)
+       .post(auth.isAuthenticated, users.NewUser);
     //auth.isAuthenticated,
     app.route("/login")
-       .post(user.loginUser);
+       .post(users.loginUser);
 
     app.route("/logout")
-       .post(auth.isAuthenticated, user.logoutUser); 
+       .post(auth.isAuthenticated, users.logoutUser); 
 }

@@ -2,21 +2,25 @@ const db = require("../../database");
 const article = require("../../app/controllers/articles.controllers");
 
 
-const getOneComment =(id,done) => {
-    console.log('in comments')
-    const sql = 'SELECT * FROM comments WHERE article_id=?'
+const getAllComments = (done) => {
+  //  const sql = 'SELECT * FROM comments WHERE article_id=?'
+    const results = [];
 
-    db.get(sql, [id], (err,row) => {
-        if(err) return done(err)
-        if(!row) return done(404)
+    db.each(
+        "SELECT * FROM comments WHERE article_id=?",
+        [], 
+        (err,row) => {
+        if(err) console.log("Something went wrong: " + err);
 
-        return done(null, {
+        results.push({
                 comment_id:row.comment_id,
                 comment_text:row.comment_text,
                 date_published:new Date(row.date_published).toLocaleDateString(),
                 article_id:row.article_id,
-
-            })
+            });
+        },
+        (err,num_rows) => {
+            return done(err,num_rows,results);
         }
     )
 }
@@ -39,7 +43,7 @@ const AddNewComment = (comments,done) => {
 
 const deleteC = (id,done) => {
 
-    const sql = 'DELETE FROM comments WHERE comment_id=?'
+    const sql = 'DELETE FROM comments WHERE article_id=?'
     let values = [id];
 
     db.run (sql,values,(err) => {
@@ -49,7 +53,7 @@ const deleteC = (id,done) => {
 }
 
 module.exports = {
-    getOneComment:getOneComment,
+    getAllComments:getAllComments,
     AddNewComment:AddNewComment,
     deleteC:deleteC,
 }
