@@ -1,13 +1,13 @@
 const Joi = require("joi");
 const users = require("../models/user.models");
 
-const getAll = (req, res) => {
+const getAll = (req, res, next) => {
     users.getAllUsers((err, num_rows, results) => {
         if (err) {
             console.log(err)
             return res.sendStatus(500);
         }
-        return res.status(200).send(results);
+        return res.status(201).send(results);
     })
 }
 
@@ -17,7 +17,7 @@ const NewUser = (req, res, next) => {
         "first_name": Joi.string().required(),
         "last_name": Joi.string().required(),
         "email": Joi.string().email().required(),
-        "password": Joi.string().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!*?&]{8,}$/).required()
+        "password": Joi.string().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!*?&]{8,16}$/).required()
     });
 
     const { error } = schema.validate(req.body);
@@ -33,14 +33,12 @@ const NewUser = (req, res, next) => {
     })
 }
 
-
 const loginUser = (req, res) => {
 
     const schema = Joi.object({
         "email": Joi.string().email().required(),
         "password": Joi.string().required()
     })
-
     const { error } = schema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -56,10 +54,9 @@ const loginUser = (req, res) => {
             } else {
                 users.setToken(id, (err, token) => {
                     if (err) return res.sendStatus(500)
-                    return res.status(201).send({ user_id: id, session_token: token })
+                    return res.status(200).send({ user_id: id, session_token: token })
                 })
             }
-
         })
     })
 }

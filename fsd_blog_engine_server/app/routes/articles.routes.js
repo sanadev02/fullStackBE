@@ -1,11 +1,11 @@
-const articles = require("../controllers/articles.controllers"); // import controller
+const articles = require("../controllers/articles.controllers");
 const auth = require("../lib/authentication");
 
-module.exports = function(app) {
+module.exports = function (app) {
 
     app.route("/articles")
         .get(articles.getAll)
-        .post(auth.isAuthenticated, articles.create);
+        .post( articles.create); // auth.isAuthenticated,
 
     app.route("/articles/:article_id")
         .get(articles.getOne)

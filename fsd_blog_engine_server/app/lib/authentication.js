@@ -1,17 +1,19 @@
-const user = require("../models/user.models");
+const users = require("../models/user.models");
 
-const isAuthenticated = function(req, res, next) {
+const isAuthenticated = function (req, res, next) {
     let token = req.get('X-Authorization');
 
-    user.getIDFromToken(token, (err, id) => {
+    users.getIdFromToken(token, (err, id) => {
         console.log(token, id)
         if (err || id === null) {
             return res.sendStatus(401);
+        } else {
+            next();
         }
-        next();
+
     });
 }
 
 module.exports = {
-    isAuthenticated:isAuthenticated,
+    isAuthenticated: isAuthenticated,
 }
