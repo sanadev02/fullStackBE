@@ -17,7 +17,9 @@ const NewUser = (req, res, next) => {
         "first_name": Joi.string().required(),
         "last_name": Joi.string().required(),
         "email": Joi.string().email().required(),
-        "password": Joi.string().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!*?&]{8,16}$/).required()
+        "password": Joi.string().required().min(7).max(15).pattern(new RegExp('(?=[A-Za-z0-9@#$%^&+!=]+$)^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+!=]).*$'))
+
+        // "password": Joi.string().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!*?&]{8,16}$/).required()
     });
 
     const { error } = schema.validate(req.body);
@@ -68,7 +70,7 @@ const logoutUser = (req, res, next) => {
             console.log(err)
             return res.sendStatus(500)
         }
-        return res.status(201).send("User logged out");
+        return res.status(200).send("User logged out");
     })
 }
 

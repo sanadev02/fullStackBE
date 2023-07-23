@@ -1,17 +1,44 @@
 const Joi = require("joi");
 const comments = require("../models/comments.models");
-//const articles = require("../models/articles.models");
 const articles = require("../models/articles.models");
 
+// const getComments = (req, res) => {
+//     let article_id = parseInt(req.params.article_id);
+
+//     comments.getAllComments(article_id, (err, num_rows, results) => {
+//         if (err === 404) return res.sendStatus(404);
+//         if (err) return res.sendStatus(500);
+
+//         return res.status(200).send(results);
+//     })
+
+// }
+
 const getComments = (req, res) => {
-    let article_id = parseInt(req.params.article_id);
+    let article_id = parseInt(req.params.article_id)
 
-    comments.getAllComments(article_id, (err, num_rows, results) => {
-        if (err === 404) return res.sendStatus(404);
-        if (err) return res.sendStatus(500);
-
-        return res.status(200).send(results);
+    articles.getSingleArticle(article_id, (err, result) => {
+        if (err === 404) return res.sendStatus(404)
+        if (err) return res.sendStatus(500)
+        else {
+            console.log("HAVE U GOT TO HERE??");
+                comments.getAllComments(article_id, (err, num_rows, results) => {
+                if (err === 404) {
+                    return res.sendStatus(404)//failed
+                }
+                if (err ===500) {
+                    return res.sendStatus(500) //
+            
+                }
+    
+                return res.status(200).send(results);
+                })
+            
+            }
+        
     })
+    
+    
 
 }
 
@@ -31,7 +58,7 @@ const addComment = (req, res) => {
     articles.getSingleArticle(article_id, (err, id) => {
         console.log(article_id, 'article_id is here')
 
-        //if (err === 404) return res.sendStatus(404)
+        if (err === 404) return res.sendStatus(404)
         if (err) {
             console.log(res.details);
             return res.sendStatus(500)

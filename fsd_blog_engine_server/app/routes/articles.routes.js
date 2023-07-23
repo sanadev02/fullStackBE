@@ -5,7 +5,7 @@ module.exports = function (app) {
 
     app.route("/articles")
         .get(articles.getAll)
-        .post( articles.create); // auth.isAuthenticated,
+        .post(auth.isAuthenticated, articles.create); 
 
     app.route("/articles/:article_id")
         .get(articles.getOne)

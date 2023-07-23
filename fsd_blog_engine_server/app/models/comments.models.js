@@ -6,7 +6,7 @@ const getAllComments = (article_id, done) => {
 
     db.each(
         "SELECT * FROM comments WHERE article_id=?",
-        [],
+        [article_id],
         (err, row) => {
             if (err) return done(err);
 
@@ -14,7 +14,7 @@ const getAllComments = (article_id, done) => {
                 comment_id: row.comment_id,
                 date_published: new Date(row.date_published).toLocaleDateString(),
                 comment_text: row.comment_text,
-                article_id: row.article_id
+                //article_id: row.article_id
             });
         },
         (err, num_rows) => {
@@ -38,14 +38,49 @@ const AddNewComment = (comment_text, article_id, done) => {
     )
 }
 
+const getSingleComment = (id, done) => { //no need to export as it isonly ever used inside of this model. In future may need to export- Hamza
+    const sql = 'SELECT * FROM comments WHERE comment_id=?'
+    db.get(sql, [id], (err, row) => {
+        if (err) return done(err)
+        if (!row) return done(404)
+
+        return done(null, {
+           comment_id: row.comment_id
+        })
+    })
+}
+
 const deleteC = (id, done) => {
 
-    const sql = 'DELETE FROM comments WHERE comment_id=?'
-    let values = [id];
+    getSingleComment(id, (err) => {
+        if (err === 404) {
+            console.log("Comment does not exist")
+            return done(err)
+        }
+       
 
-    db.run(sql, [id], values, (err) => {
-        return done(err);
+        else {
+             const sql = 'DELETE from comments WHERE comment_id=?';
+                let values = [id];
+    
+
+
+            db.run(sql, values, (err) => {
+                if (err) return done(err, null);
+                return done(err)
+            })
+
+        }
+    
+        
     })
+    
+    // const sql = 'DELETE FROM comments WHERE comment_id=?'
+    // let values = [id];
+
+    // db.run(sql, [id], values, (err) => {
+    //     return done(err);
+    // })
 
 }
 

@@ -3,7 +3,7 @@ const auth = require("../lib/authentication");
 
 module.exports = function (app) {
 
-   app.route("/user")
+   app.route("/users")
       .get(auth.isAuthenticated, users.getAll)
       .post(auth.isAuthenticated, users.NewUser);
 
